@@ -264,8 +264,9 @@ ExecutionPayloadV4:
     - withdrawals
     - blobGasUsed
     - excessBlobGas
-    - depositReceipts
-    - exits
+    - depositRequests
+    - withdrawalRequests
+    - consolidationRequests
   properties:
     parentHash:
       $ref: '#/components/schemas/ExecutionPayloadV3/properties/parentHash'
@@ -301,16 +302,21 @@ ExecutionPayloadV4:
       $ref: '#/components/schemas/ExecutionPayloadV3/properties/blobGasUsed'
     excessBlobGas:
       $ref: '#/components/schemas/ExecutionPayloadV3/properties/excessBlobGas'
-    depositReceipts:
-      title: Deposit receipts
+    depositRequests:
+      title: Deposit requests
       type: array
       items:
-        $ref: '#/components/schemas/DepositReceiptV1'
-    exits:
-      title: Exits
+        $ref: '#/components/schemas/DepositRequestV1'
+    withdrawalRequests:
+      title: Withdrawals requests
       type: array
       items:
-        $ref: '#/components/schemas/ExitV1'
+        $ref: '#/components/schemas/WithdrawalRequestV1'
+    consolidationRequests:
+      title: Consolidation requests
+      type: array
+      items:
+        $ref: '#/components/schemas/ConsolidationRequestV1'
 ExecutionPayloadBodyV1:
   title: Execution payload body object V1
   type: object
@@ -326,6 +332,44 @@ ExecutionPayloadBodyV1:
         - 'null'
       items:
         $ref: '#/components/schemas/WithdrawalV1'
+ExecutionPayloadBodyV2:
+  title: Execution payload body object V2
+  type: object
+  required:
+    - transactions
+  properties:
+    transactions:
+      title: Transactions
+      type: array
+      items:
+        $ref: '#/components/schemas/bytes'
+    withdrawals:
+      title: Withdrawals
+      type:
+        - array
+        - 'null'
+      items:
+        $ref: '#/components/schemas/WithdrawalV1'
+    depositRequests:
+      title: Deposit requests
+      type:
+        - array
+        - 'null'
+      items:
+        $ref: '#/components/schemas/DepositRequestV1'
+    withdrawalRequests:
+      title: Withdrawals requests
+      type:
+        - array
+        - 'null'
+      items:
+        $ref: '#/components/schemas/WithdrawalRequestV1'
+    consolidationRequests:
+      title: Consolidation requests
+        - array
+        - 'null'
+      items:
+        $ref: '#/components/schemas/ConsolidationRequestV1'
 BlobsBundleV1:
   title: Blobs bundle object V1
   type: object
@@ -349,8 +393,8 @@ BlobsBundleV1:
       type: array
       items:
         $ref: '#/components/schemas/bytes'
-DepositReceiptV1:
-  title: Deposit receipt object V1
+DepositRequestV1:
+  title: Deposit request object V1
   type: object
   required:
     - pubkey
@@ -374,16 +418,37 @@ DepositReceiptV1:
     index:
       title: Deposit index
       $ref: '#/components/schemas/uint64'
-ExitV1:
-  title: Exit object V1
+WithdrawalRequestV1:
+  title: Withdrawal request object V1
   type: object
   required:
     - sourceAddress
-    - validatorPublicKey
+    - validatorPubkey
+    - amount
   properties:
     sourceAddress:
       title: Source address
       $ref: '#/components/schemas/address'
-    validatorPublicKey:
+    validatorPubkey:
       title: Validator public key
+      $ref: '#/components/schemas/bytes48'
+    amount:
+      title: Withdraw amount
+      $ref: '#/components/schemas/uint64'
+ConsolidationRequestV1:
+  title: Consolidation request object V1
+  type: object
+  required:
+    - sourceAddress
+    - sourcePubkey
+    - targetPubkey
+  properties:
+    sourceAddress:
+      title: Source address
+      $ref: '#/components/schemas/address'
+    sourcePubkey:
+      title: Source validator public key
+      $ref: '#/components/schemas/bytes48'
+    targetPubkey:
+      title: Target validator public key
       $ref: '#/components/schemas/bytes48'
